@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# backend
+/backend/node-server/node_modules
+/backend/node-server/.env
+/backend/rust-simulator/target
+/backend/rust-simulator/Cargo.lock

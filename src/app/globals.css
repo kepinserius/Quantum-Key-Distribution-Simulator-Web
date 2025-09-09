@@ -1,26 +1,230 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Updated color tokens to use the new color scheme: #fca311 (amber), #14213d (navy), #e5e5e5 (light gray) */
+  --background: #14213d; /* Dark navy background */
+  --foreground: #e5e5e5; /* Light gray text */
+  --card: #1a2a47; /* Slightly lighter navy for cards */
+  --card-foreground: #e5e5e5; /* Light gray text on cards */
+  --popover: #1a2a47; /* Navy popover background */
+  --popover-foreground: #e5e5e5; /* Light gray text in popovers */
+  --primary: #fca311; /* Amber primary color */
+  --primary-foreground: #14213d; /* Navy text on amber */
+  --secondary: #2a3a57; /* Muted navy secondary */
+  --secondary-foreground: #e5e5e5; /* Light gray text on secondary */
+  --muted: #243447; /* Muted navy elements */
+  --muted-foreground: #b8b8b8; /* Muted light gray text */
+  --accent: #fca311; /* Amber accent */
+  --accent-foreground: #14213d; /* Navy text on accents */
+  --destructive: #ef4444; /* Red for destructive actions */
+  --destructive-foreground: #e5e5e5; /* Light gray text on destructive */
+  --border: #2a3a57; /* Navy borders */
+  --input: #1a2a47; /* Navy input background */
+  --ring: #fca311; /* Amber focus ring */
+  --chart-1: #fca311; /* Chart amber */
+  --chart-2: #f59e0b; /* Chart orange */
+  --chart-3: #ef4444; /* Chart red */
+  --chart-4: #06b6d4; /* Chart cyan */
+  --chart-5: #10b981; /* Chart green */
+  --radius: 0.5rem;
+  --sidebar: #1a2a47;
+  --sidebar-foreground: #e5e5e5;
+  --sidebar-primary: #fca311;
+  --sidebar-primary-foreground: #14213d;
+  --sidebar-accent: #fca311;
+  --sidebar-accent-foreground: #14213d;
+  --sidebar-border: #2a3a57;
+  --sidebar-ring: #fca311;
+}
+
+.dark {
+  /* Dark mode uses same color scheme */
+  --background: #14213d;
+  --foreground: #e5e5e5;
+  --card: #1a2a47;
+  --card-foreground: #e5e5e5;
+  --popover: #1a2a47;
+  --popover-foreground: #e5e5e5;
+  --primary: #fca311;
+  --primary-foreground: #14213d;
+  --secondary: #2a3a57;
+  --secondary-foreground: #e5e5e5;
+  --muted: #243447;
+  --muted-foreground: #b8b8b8;
+  --accent: #fca311;
+  --accent-foreground: #14213d;
+  --destructive: #ef4444;
+  --destructive-foreground: #e5e5e5;
+  --border: #2a3a57;
+  --input: #1a2a47;
+  --ring: #fca311;
+  --chart-1: #fca311;
+  --chart-2: #f59e0b;
+  --chart-3: #ef4444;
+  --chart-4: #06b6d4;
+  --chart-5: #10b981;
+  --sidebar: #1a2a47;
+  --sidebar-foreground: #e5e5e5;
+  --sidebar-primary: #fca311;
+  --sidebar-primary-foreground: #14213d;
+  --sidebar-accent: #fca311;
+  --sidebar-accent-foreground: #14213d;
+  --sidebar-border: #2a3a57;
+  --sidebar-ring: #fca311;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Added quantum-specific animations and effects */
+@keyframes quantum-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(252, 163, 17, 0.7);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(252, 163, 17, 0);
+  }
+}
+
+@keyframes photon-travel {
+  0% {
+    transform: translateX(-100%) rotate(0deg);
+    opacity: 0;
+    box-shadow: 0 0 20px rgba(252, 163, 17, 0.8);
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100vw) rotate(360deg);
+    opacity: 0;
+    box-shadow: 0 0 20px rgba(252, 163, 17, 0.8);
+  }
+}
+
+@keyframes polarization-rotate {
+  0% {
+    transform: rotate(0deg);
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    transform: rotate(90deg);
+    filter: hue-rotate(45deg);
+  }
+}
+
+@keyframes quantum-interference {
+  0%,
+  100% {
+    filter: hue-rotate(0deg) brightness(1);
+    box-shadow: 0 0 15px rgba(252, 163, 17, 0.3);
+  }
+  25% {
+    filter: hue-rotate(15deg) brightness(1.2);
+    box-shadow: 0 0 25px rgba(252, 163, 17, 0.5);
+  }
+  50% {
+    filter: hue-rotate(30deg) brightness(0.9);
+    box-shadow: 0 0 20px rgba(252, 163, 17, 0.4);
+  }
+  75% {
+    filter: hue-rotate(45deg) brightness(1.1);
+    box-shadow: 0 0 30px rgba(252, 163, 17, 0.6);
+  }
+}
+
+.quantum-pulse {
+  animation: quantum-pulse 2s ease-in-out infinite;
+}
+
+.photon-travel {
+  animation: photon-travel 3s linear infinite;
+}
+
+.polarization-rotate {
+  animation: polarization-rotate 1s ease-in-out;
+}
+
+.quantum-interference {
+  animation: quantum-interference 4s ease-in-out infinite;
+}
+
+/* Added quantum grid background effect */
+.quantum-grid {
+  background-image: linear-gradient(rgba(252, 163, 17, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(252, 163, 17, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+/* Added new gradient effects for enhanced visual appeal */
+.quantum-glow {
+  background: linear-gradient(135deg, rgba(252, 163, 17, 0.1) 0%, rgba(20, 33, 61, 0.8) 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(252, 163, 17, 0.2);
+}
+
+.amber-glow {
+  box-shadow: 0 0 20px rgba(252, 163, 17, 0.3), 0 0 40px rgba(252, 163, 17, 0.1);
+}
+
+.navy-gradient {
+  background: linear-gradient(135deg, #1a2a47 0%, #14213d 100%);
 }
