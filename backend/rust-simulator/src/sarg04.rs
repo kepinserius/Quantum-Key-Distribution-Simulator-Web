@@ -3,15 +3,15 @@ use uuid::Uuid;
 use std::time::{SystemTime, UNIX_EPOCH};
 use rayon::prelude::*;
 
-pub struct BB84Simulator {
+pub struct SARG04Simulator {
     state: SimulationState,
     hacker_config: HackerConfig,
     noise_model: NoiseModel,
 }
 
-impl BB84Simulator {
+impl SARG04Simulator {
     pub fn new() -> Self {
-        let session_id = format!("QKD-{}", Uuid::new_v4().to_string());
+        let session_id = format!("SARG04-{}", Uuid::new_v4().to_string());
         let start_time = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
@@ -44,7 +44,7 @@ impl BB84Simulator {
         self.noise_model = noise_model;
     }
 
-    // Generate random quantum bits for Alice using parallel processing
+    // Generate random quantum bits for Alice using SARG04 encoding
     pub fn generate_alice_bits(&mut self, count: usize) -> Vec<QuantumBit> {
         let now = SystemTime::now()
             .duration_since(UNIX_EPOCH)
@@ -63,7 +63,13 @@ impl BB84Simulator {
                         Basis::Diagonal 
                     };
 
-                    // Map bit value and basis to polarization
+                    // In SARG04, the encoding is more complex:
+                    // For rectilinear basis:
+                    //   0 -> |0⟩ (0°)
+                    //   1 -> |1⟩ (90°)
+                    // For diagonal basis:
+                    //   0 -> |+⟩ (45°)
+                    //   1 -> |-⟩ (135°)
                     let polarization = match (&basis, value) {
                         (Basis::Rectilinear, 0) => 0,
                         (Basis::Rectilinear, 1) => 90,
@@ -96,7 +102,13 @@ impl BB84Simulator {
                         Basis::Diagonal 
                     };
 
-                    // Map bit value and basis to polarization
+                    // In SARG04, the encoding is more complex:
+                    // For rectilinear basis:
+                    //   0 -> |0⟩ (0°)
+                    //   1 -> |1⟩ (90°)
+                    // For diagonal basis:
+                    //   0 -> |+⟩ (45°)
+                    //   1 -> |-⟩ (135°)
                     let polarization = match (&basis, value) {
                         (Basis::Rectilinear, 0) => 0,
                         (Basis::Rectilinear, 1) => 90,
@@ -126,7 +138,7 @@ impl BB84Simulator {
         bits
     }
 
-    // Bob measures the quantum bits with random bases using parallel processing
+    // Bob measures the quantum bits with SARG04 protocol
     pub fn measure_bits(&mut self, hacker_present: bool) -> Vec<QuantumBit> {
         let alice_bits = self.state.alice_bits.clone();
         let hacker_config = self.hacker_config.clone();
@@ -135,7 +147,7 @@ impl BB84Simulator {
         // Use parallel processing for large counts
         let (bob_bits, intercepted_bits): (Vec<_>, Vec<_>) = if alice_bits.len() > 1000 {
             alice_bits
-                .into_par_iter()
+                .par_iter()
                 .enumerate()
                 .map(|(index, alice_bit)| {
                     // Apply photon loss model
@@ -454,7 +466,7 @@ impl BB84Simulator {
         bob_bits
     }
 
-    // Sift the key by comparing bases using parallel processing
+    // Sift the key by comparing bases (SARG04 specific)
     pub fn sift_key(&mut self) -> String {
         let alice_bits = self.state.alice_bits.clone();
         let bob_bits = self.state.bob_bits.clone();
@@ -466,12 +478,17 @@ impl BB84Simulator {
                 .enumerate()
                 .filter_map(|(index, alice_bit)| {
                     if let Some(bob_bit) = bob_bits.get(index) {
+                        // In SARG04, key sifting is more complex
+                        // Bob announces his basis, and Alice tells him if it's correct
+                        // If correct, they keep the bit; if not, they discard it
                         if alice_bit.basis == bob_bit.basis {
                             let error = if alice_bit.value != bob_bit.value { 1 } else { 0 };
                             Some((alice_bit.value.to_string(), error, 1))
                         } else {
                             None
                         }
+                        // In SARG04, even when bases don't match, 
+                        // some information might be gained, but we discard these for security
                     } else {
                         None
                     }
@@ -492,6 +509,9 @@ impl BB84Simulator {
 
             for (index, alice_bit) in alice_bits.iter().enumerate() {
                 if let Some(bob_bit) = bob_bits.get(index) {
+                    // In SARG04, key sifting is more complex
+                    // Bob announces his basis, and Alice tells him if it's correct
+                    // If correct, they keep the bit; if not, they discard it
                     if alice_bit.basis == bob_bit.basis {
                         sifted_bits.push(alice_bit.value.to_string());
 
@@ -501,6 +521,8 @@ impl BB84Simulator {
                         }
                         total_comparisons += 1;
                     }
+                    // In SARG04, even when bases don't match, 
+                    // some information might be gained, but we discard these for security
                 }
             }
 
@@ -532,7 +554,7 @@ impl BB84Simulator {
 
     // Reset simulation
     pub fn reset(&mut self) {
-        let session_id = format!("QKD-{}", Uuid::new_v4().to_string());
+        let session_id = format!("SARG04-{}", Uuid::new_v4().to_string());
         let start_time = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()

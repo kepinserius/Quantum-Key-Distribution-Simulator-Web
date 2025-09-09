@@ -44,3 +44,12 @@ pub struct HackerConfig {
     pub measurement_error_rate: f64, // 0.0 to 1.0
     pub resend_error_rate: f64,      // 0.0 to 1.0
 }
+
+// Advanced noise models
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct NoiseModel {
+    pub detector_efficiency: f64,     // 0.0 to 1.0
+    pub dark_count_rate: f64,         // Probability of dark counts
+    pub polarization_drift: f64,      // Polarization drift over time
+    pub loss_probability: f64,        // Photon loss probability
+}
